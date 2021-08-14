@@ -1,0 +1,82 @@
+## 229. 求众数 II
+
+> **知识点：数组；消消乐；摩尔投票法**；
+### 题目描述
+
+给定一个大小为 n 的整数数组，找出其中所有出现超过 ⌊ n/3 ⌋ 次的元素。
+
+进阶：尝试设计时间复杂度为 O(n)、空间复杂度为 O(1)的算法解决此问题。
+
+ 
+
+##### 示例
+
+```
+输入：[3,2,3]
+输出：[3]
+
+输入：nums = [1]
+输出：[1]
+
+输入：[1,1,1,3,3,2,2,2]
+输出：[1,2]
+```
+---
+
+### 解法一：消消乐(投票法)
+
+这道题和169题的区别在于这道题是三个了，当有超过一半的时候，我们每次需要消除两个数，消消乐最多需要进行n/2次，所以超过n/2的一定没有被消除完；这次超过三分之一，**所以我们每次需要消除3个不同的数**，数组长度是n，所以最多需要进行n/3次，所以超过n/3的元素一定没有被消除完，然后就需要在最后存活下来的2个数里看一下谁超过了三分之一。  
+
+所以在169的基础上设置为两个候选人，两个计数器，然后遇到和两个候选人都不一样的时候就消除，遇到计数器为0的时候就更换候选人；
+
+```
+class Solution {
+    public List<Integer> majorityElement(int[] nums) {
+        List<Integer> list = new ArrayList<>();
+        if(nums.length == 0) return list;
+        int cand1 = 0, count1 = 0;
+        int cand2 = 0, count2 = 0;
+        //投票阶段；
+        for(int i = 0; i < nums.length; i++){
+            if(nums[i] == cand1){
+                count1++;
+                continue;
+            }
+            if(nums[i] == cand2){
+                count2++;
+                continue;
+            }
+            if(count1 == 0){
+                cand1 = nums[i]; //更换候选人；
+                count1++;
+                continue;
+            }if(count2 == 0){
+                cand2 = nums[i];
+                count2++;
+                continue;
+            }
+            count1--;
+            count2--;
+        }
+        //计数阶段；
+        count1 = 0;
+        count2 = 0;
+        for(int num : nums){
+            if(cand1 == num){
+                count1++;
+            }else if(cand2 == num){
+                count2++;
+            }
+        }
+        if(count1 > nums.length / 3) list.add(cand1);
+        if(count2 > nums.length / 3) list.add(cand2);
+        return list;
+    }
+}
+``` 
+### 相关题目
+
+[169. 多数元素](https://www.cnblogs.com/Curryxin/p/15133082.html)
+
+### 相关链接
+[摩尔投票法](https://leetcode-cn.com/problems/majority-element-ii/solution/liang-fu-dong-hua-yan-shi-mo-er-tou-piao-fa-zui-zh/)
